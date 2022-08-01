@@ -1,7 +1,6 @@
 package GoOffReg
 
 import (
-	"log"
 	"syscall"
 	"unsafe"
 
@@ -254,7 +253,7 @@ func ORGetKeySecurity(
 	lpData *byte,
 	lpcbData *uint32,
 ) uint32 {
-	r1, r2, err := syscall.SyscallN(orGetKeySecurity.Addr(),
+	r1, _, _ := syscall.SyscallN(orGetKeySecurity.Addr(),
 		uintptr(handle),
 		uintptr(dwIndex),
 		uintptr(unsafe.Pointer(lpValueName)),
@@ -263,7 +262,6 @@ func ORGetKeySecurity(
 		uintptr(unsafe.Pointer(lpData)),
 		uintptr(unsafe.Pointer(lpcbData)),
 	)
-	log.Println(r1, r2, err)
 	return uint32(r1)
 }
 
@@ -404,15 +402,12 @@ func ORSaveHive(
 	dwOsMajorVersion uint32,
 	dwOsMinorVersion uint32,
 ) uint32 {
-	r1, r2, err := syscall.SyscallN(orSaveHive.Addr(),
+	r1, _, _ := syscall.SyscallN(orSaveHive.Addr(),
 		uintptr(handle),
 		uintptr(unsafe.Pointer(lpHivePath)),
 		uintptr(dwOsMajorVersion),
 		uintptr(dwOsMinorVersion),
 	)
-	if r1 != 0 {
-		log.Println(r1, r2, err)
-	}
 	return uint32(r1)
 }
 
@@ -446,16 +441,13 @@ func ORSetValue(
 	pvData *byte,
 	pcbData uint32,
 ) uint32 {
-	r1, r2, err := syscall.SyscallN(orSetValue.Addr(),
+	r1, _, _ := syscall.SyscallN(orSetValue.Addr(),
 		uintptr(handle),
 		uintptr(unsafe.Pointer(lpValue)),
 		uintptr(pdwType),
 		uintptr(unsafe.Pointer(pvData)),
 		uintptr(pcbData),
 	)
-	if r1 != 0 {
-		log.Println(r1, r2, err)
-	}
 	return uint32(r1)
 }
 
