@@ -9,19 +9,19 @@ import (
 
 const ( // https://docs.microsoft.com/en-us/windows/win32/sysinfo/registry-value-types
 	REG_NONE                       uint32 = 0 // No value type
-	REG_SZ                                = 1 // Unicode nul terminated string
-	REG_EXPAND_SZ                         = 2 // Unicode nul terminated string (with environment variable references)
-	REG_BINARY                            = 3 // Free form binary
-	REG_DWORD                             = 4 // 32-bit number
-	REG_DWORD_LITTLE_ENDIAN               = 4 // 32-bit number (same as REG_DWORD)
-	REG_DWORD_BIG_ENDIAN                  = 5 // 32-bit number
-	REG_LINK                              = 6 // Symbolic Link (unicode)
-	REG_MULTI_SZ                          = 7 // Multiple Unicode strings
-	REG_RESOURCE_LIST                     = 8 // Resource list in the resource map
-	REG_FULL_RESOURCE_DESCRIPTOR          = 9 // Resource list in the hardware description
-	REG_RESOURCE_REQUIREMENTS_LIST        = 10
-	REG_QWORD                             = 11 // 64-bit number
-	REG_QWORD_LITTLE_ENDIAN               = 11 // 64-bit number (same as REG_QWORD)
+	REG_SZ                         uint32 = 1 // Unicode nul terminated string
+	REG_EXPAND_SZ                  uint32 = 2 // Unicode nul terminated string (with environment variable references)
+	REG_BINARY                     uint32 = 3 // Free form binary
+	REG_DWORD                      uint32 = 4 // 32-bit number
+	REG_DWORD_LITTLE_ENDIAN        uint32 = 4 // 32-bit number (same as REG_DWORD)
+	REG_DWORD_BIG_ENDIAN           uint32 = 5 // 32-bit number
+	REG_LINK                       uint32 = 6 // Symbolic Link (unicode)
+	REG_MULTI_SZ                   uint32 = 7 // Multiple Unicode strings
+	REG_RESOURCE_LIST              uint32 = 8 // Resource list in the resource map
+	REG_FULL_RESOURCE_DESCRIPTOR   uint32 = 9 // Resource list in the hardware description
+	REG_RESOURCE_REQUIREMENTS_LIST uint32 = 10
+	REG_QWORD                      uint32 = 11 // 64-bit number
+	REG_QWORD_LITTLE_ENDIAN        uint32 = 11 // 64-bit number (same as REG_QWORD)
 )
 
 var (
@@ -220,7 +220,6 @@ func OREnumValue(
 	// _Inout_opt_ PDWORD lpcbData
 	handle ORHKEY,
 	dwIndex uint32,
-	// lpValueName *uint16,
 	lpValueName *byte,
 	lpcValueName *uint32,
 	lpType *uint32,
@@ -246,21 +245,15 @@ func ORGetKeySecurity(
 	// _Out_opt_ PSECURITY_DESCRIPTOR pSecurityDescriptor,
 	// _Inout_   PDWORD               lpcbSecurityDescriptor
 	handle ORHKEY,
-	dwIndex uint32,
-	lpValueName *uint16,
-	lpcValueName *uint32,
-	lpType *uint32,
-	lpData *byte,
-	lpcbData *uint32,
+	SecurityInformation windows.SECURITY_INFORMATION,
+	pSecurityDescriptor *windows.SECURITY_DESCRIPTOR,
+	lpcbSecurityDescriptor *uint32,
 ) uint32 {
 	r1, _, _ := syscall.SyscallN(orGetKeySecurity.Addr(),
 		uintptr(handle),
-		uintptr(dwIndex),
-		uintptr(unsafe.Pointer(lpValueName)),
-		uintptr(unsafe.Pointer(lpcValueName)),
-		uintptr(unsafe.Pointer(lpType)),
-		uintptr(unsafe.Pointer(lpData)),
-		uintptr(unsafe.Pointer(lpcbData)),
+		uintptr(SecurityInformation),
+		uintptr(unsafe.Pointer(pSecurityDescriptor)),
+		uintptr(unsafe.Pointer(lpcbSecurityDescriptor)),
 	)
 	return uint32(r1)
 }
